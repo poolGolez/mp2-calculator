@@ -1,13 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import { Grid, Stack, TextField } from "@mui/material";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
+    <Stack sx={{ height: "100vh" }}>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -16,20 +14,27 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <Grid container spacing={2}>
+        <TextField
+          id="starting-contribution"
+          name="starting-contribution"
+          label="Starting Contribution"
+        />
+
+        <TextField
+          id="monthly-contribution"
+          name="monthly-contribution"
+          label="Monthly Contribution"
+        />
+
+        <TextField
+          id="estimated-rate"
+          name="estimated-rate"
+          label="Estimated Rate"
+        />
+      </Grid>
+    </Stack>
+  );
 }
 
-export default App
+export default App;
