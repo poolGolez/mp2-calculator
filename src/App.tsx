@@ -28,11 +28,7 @@ function App() {
     </Grid>
   );
 
-  const [contributions] = useState(
-    Array(5 * 12)
-      .fill(0)
-      .map((_, index) => (index + 1) * 500)
-  );
+  const [contributions] = useState([10000, Array(5 * 12 - 1).fill(500)].flat());
 
   return (
     <Stack sx={{ height: "100vh" }} spacing={2}>

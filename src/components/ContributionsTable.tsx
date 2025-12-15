@@ -1,39 +1,64 @@
 import {
   DataGrid,
   type GridColDef,
+  type GridColumnGroupingModel,
   type GridValueFormatter,
 } from "@mui/x-data-grid";
 import React from "react";
 import { formatNumber } from "../utils/numeric";
+import type { GridColSpanFn } from "@mui/x-data-grid";
+import Mp2Calculation from "../services/calculator";
+import transform from "./transformToDataRows";
 
 interface ContributionsTableProps {
   contributions: number[];
 }
 
+const INTEREST_RATE = 7.5;
+
 const ContributionsTable: React.FC<ContributionsTableProps> = ({
   contributions,
 }) => {
-  const columns = computeColumns();
-  const tableData = convertToTableData(contributions);
+  const { columns, columnGroupingModel } = computeColumns();
+  const calculation = new Mp2Calculation(
+    contributions,
+    Array(5).fill(INTEREST_RATE)
+  );
+
+  const transformedData = transform(calculation);
 
   return (
     <DataGrid
-      rows={tableData}
+      rows={transformedData}
       columns={columns}
-      getRowId={(row) => row["month"]}
+      getRowId={(row) => row["id"] ?? row["month"]}
+      columnGroupingModel={columnGroupingModel}
+      showCellVerticalBorder
+      showColumnVerticalBorder
     />
   );
 };
 
-function computeColumns(): GridColDef[] {
+function computeColumns(): {
+  columns: GridColDef[];
+  columnGroupingModel: GridColumnGroupingModel;
+} {
   const defaultContributionColDef: GridColDef = {
+    headerName: "Contribution",
     width: 100,
     headerAlign: "right",
     align: "right",
+    colSpan: ((_, row) => {
+      if (row.id) {
+        return 2;
+      }
+      return 1;
+    }) as GridColSpanFn,
     valueFormatter: formatNumber as GridValueFormatter,
   } as GridColDef;
 
-  const defaultAccumulationColDef: GridColDef = {
+  const defaultAccumulationColDef = {
+    headerName: "Accumulated",
     width: 120,
     headerAlign: "right",
     align: "right",
@@ -41,107 +66,57 @@ function computeColumns(): GridColDef[] {
   } as GridColDef;
 
   const columns: GridColDef[] = [
-    { field: "month", headerName: "Month", width: 80 },
     {
-      ...defaultContributionColDef,
-      field: "year1",
-      headerName: "Year 1",
+      field: "month",
+      headerName: "Month",
+      width: 150,
+      valueGetter: (_, row) => {
+        if (row.id !== undefined) {
+          return row.label;
+        }
+        return row["month"];
+      },
     },
-    {
-      ...defaultAccumulationColDef,
-      field: "year1_acc",
-      headerName: "Year 1 Acc",
-    },
-    {
-      ...defaultContributionColDef,
-      field: "year2",
-      headerName: "Year 2",
-    },
-    {
-      ...defaultAccumulationColDef,
-      field: "year2_acc",
-      headerName: "Year 2 Acc",
-    },
-    {
-      ...defaultContributionColDef,
-      field: "year3",
-      headerName: "Year 3",
-    },
-    {
-      ...defaultAccumulationColDef,
-      field: "year3_acc",
-      headerName: "Year 3 Acc",
-    },
-    {
-      ...defaultContributionColDef,
-      field: "year4",
-      headerName: "Year 4",
-    },
-    {
-      ...defaultAccumulationColDef,
-      field: "year4_acc",
-      headerName: "Year 4 Acc",
-    },
-    {
-      ...defaultContributionColDef,
-      field: "year5",
-      headerName: "Year 5",
-    },
-    {
-      ...defaultAccumulationColDef,
-      field: "year5_acc",
-      headerName: "Year 5 Acc",
-    },
+    { ...defaultContributionColDef, field: "year1" },
+    { ...defaultAccumulationColDef, field: "year1_acc" },
+    { ...defaultContributionColDef, field: "year2" },
+    { ...defaultAccumulationColDef, field: "year2_acc" },
+    { ...defaultContributionColDef, field: "year3" },
+    { ...defaultAccumulationColDef, field: "year3_acc" },
+    { ...defaultContributionColDef, field: "year4" },
+    { ...defaultAccumulationColDef, field: "year4_acc" },
+    { ...defaultContributionColDef, field: "year5" },
+    { ...defaultAccumulationColDef, field: "year5_acc" },
   ];
-  return columns;
-}
 
-function convertToTableData(contributions: number[]) {
-  const contributionsWithAccum = contributions.reduce(
-    (result, contribution, index) => {
-      const previousAccumulated = index > 0 ? result[index - 1].accumulated : 0;
-      const accumulated = previousAccumulated + contribution;
-
-      result.push({
-        contribution,
-        accumulated,
-      });
-      return result;
+  const columnGroupingModel = [
+    {
+      groupId: "Year 1",
+      children: [{ field: "year1" }, { field: "year1_acc" }],
+      headerAlign: "center",
     },
-    [] as { contribution: number; accumulated: number }[]
-  );
-
-  const dataMap = contributionsWithAccum.reduce(
-    (acc, curr, index) => {
-      const monthIndex = index % 12;
-      const yearIndex = Math.floor(index / 12) + 1;
-      const month = mapMonth(monthIndex);
-
-      if (!acc[month]) {
-        acc[month] = { month };
-      }
-
-      acc[month][`year${yearIndex}`] = curr.contribution;
-      acc[month][`year${yearIndex}_acc`] = curr.accumulated;
-
-      return acc;
+    {
+      groupId: "Year 2",
+      children: [{ field: "year2" }, { field: "year2_acc" }],
+      headerAlign: "center",
     },
-    {} as Record<
-      string,
-      {
-        month: string;
-        [key: string]: number | string;
-      }
-    >
-  );
-
-  return Object.values(dataMap);
-}
-
-function mapMonth(index: number) {
-  return new Date(2000, index, 1)
-    .toLocaleString("en-US", { month: "short" })
-    .toUpperCase();
+    {
+      groupId: "Year 3",
+      children: [{ field: "year3" }, { field: "year3_acc" }],
+      headerAlign: "center",
+    },
+    {
+      groupId: "Year 4",
+      children: [{ field: "year4" }, { field: "year4_acc" }],
+      headerAlign: "center",
+    },
+    {
+      groupId: "Year 5",
+      children: [{ field: "year5" }, { field: "year5_acc" }],
+      headerAlign: "center",
+    },
+  ] as GridColumnGroupingModel;
+  return { columns, columnGroupingModel };
 }
 
 export default ContributionsTable;
