@@ -1,34 +1,14 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { Grid, Stack, TextField } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import ContributionsTable from "./components/ContributionsTable";
 import { useState } from "react";
+import ContributionsInputForm from "./components/ContributionsInputForm";
+import { formatNumber } from "./utils/numeric";
 
 function App() {
-  const form = (
-    <Grid container spacing={2}>
-      <TextField
-        id="starting-contribution"
-        name="starting-contribution"
-        label="Starting Contribution"
-      />
-
-      <TextField
-        id="monthly-contribution"
-        name="monthly-contribution"
-        label="Monthly Contribution"
-      />
-
-      <TextField
-        id="estimated-rate"
-        name="estimated-rate"
-        label="Estimated Rate"
-      />
-    </Grid>
-  );
-
-  const [contributions] = useState([10000, Array(5 * 12 - 1).fill(500)].flat());
+  const [contributions, setContributions] = useState<number[]>([]);
 
   return (
     <Stack sx={{ height: "100vh" }} spacing={2}>
@@ -40,7 +20,36 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      {form}
+      <Stack
+        direction="row"
+        spacing={2}
+        divider={<Divider orientation="vertical" flexItem />}
+      >
+        <ContributionsInputForm
+          initState={{
+            startingContribution: 500.0,
+            monthlyContribution: 500.0,
+            estimatedRate: 6.5,
+          }}
+          onUpdate={setContributions}
+        />
+        <>
+          <Stack spacing={2}>
+            {Object.entries({
+              "Total Interest Earned": `${formatNumber(
+                6266.14
+              )} (${formatNumber(20.89)}%)`,
+              "Total Contributions": formatNumber(30000),
+              "Ending Balance": formatNumber(36266.14),
+            }).map(([key, value], index) => (
+              <Stack direction="row" spacing={2} key={index}>
+                <div>{key}</div>
+                <div>{value}</div>
+              </Stack>
+            ))}
+          </Stack>
+        </>
+      </Stack>
       <ContributionsTable contributions={contributions} />
     </Stack>
   );
