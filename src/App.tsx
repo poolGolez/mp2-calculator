@@ -51,7 +51,10 @@ function App() {
           <EarningsSection calculation={calculation} />
         </Box>
       </Stack>
-      <ContributionsTable calculation={calculation} />
+      <ContributionsTable
+        calculation={calculation}
+        setInterestRates={setInterestRates}
+      />
     </Stack>
   );
 }

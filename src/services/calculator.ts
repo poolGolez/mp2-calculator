@@ -1,6 +1,6 @@
 export default class Mp2Calculation {
 
-  constructor(private contributions: number[], private interestRates: number[]) { }
+  constructor(private contributions: number[], private _interestRates: number[]) { }
 
   get numberOfYears(): number {
     return Math.floor(this.contributions.length / 12);
@@ -17,6 +17,14 @@ export default class Mp2Calculation {
 
   get endingBalance(): number {
     return this.getEndingBalanceForYear(this.numberOfYears - 1);
+  }
+
+  get interestRates(): number[] {
+    return [...this._interestRates];
+  }
+
+  getRateForYear(index: number): number {
+    return this._interestRates[index];
   }
 
   /**
@@ -79,7 +87,7 @@ export default class Mp2Calculation {
    */
   getDividendsForYear(index: number): number {
     const getAverageMonthlyBalanceForYear = this.getAverageMonthlyBalanceForYear(index);
-    const interestRate = this.interestRates[index] / 100;
+    const interestRate = this._interestRates[index] / 100;
 
     return getAverageMonthlyBalanceForYear * interestRate;
   }
