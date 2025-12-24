@@ -11,20 +11,13 @@ import Mp2Calculation from "../services/calculator";
 import transform from "./transformToDataRows";
 
 interface ContributionsTableProps {
-  contributions: number[];
+  calculation: Mp2Calculation;
 }
 
-const INTEREST_RATE = 7.5;
-
 const ContributionsTable: React.FC<ContributionsTableProps> = ({
-  contributions,
+  calculation,
 }) => {
   const { columns, columnGroupingModel } = computeColumns();
-  const calculation = new Mp2Calculation(
-    contributions,
-    Array(5).fill(INTEREST_RATE)
-  );
-
   const transformedData = transform(calculation);
 
   return (

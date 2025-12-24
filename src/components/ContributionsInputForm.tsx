@@ -15,11 +15,13 @@ interface ContributionsInputFormInitState {
 interface ContributionsInputFormProps {
   initState: ContributionsInputFormInitState;
   onUpdate: Dispatch<SetStateAction<number[]>>;
+  setInterestRates: Dispatch<SetStateAction<number[]>>;
 }
 
 const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
   initState,
   onUpdate,
+  setInterestRates,
 }) => {
   const [startingContribution, setStartingContribution] = useState<number>(
     initState.startingContribution
@@ -27,7 +29,7 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
   const [monthlyContribution, setMonthlyContribution] = useState<number>(
     initState.monthlyContribution
   );
-  const [estimatedRate, setEstimatedRate] = useState<number>(
+  const [estimatedRates, setEstimatedRates] = useState<number>(
     initState.estimatedRate
   );
 
@@ -37,6 +39,10 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
       ...Array(5 * 12 - 1).fill(monthlyContribution),
     ]);
   }, [startingContribution, monthlyContribution, onUpdate]);
+
+  useEffect(() => {
+    setInterestRates(Array(5).fill(estimatedRates));
+  }, [estimatedRates, setInterestRates]);
 
   return (
     <Stack direction="row" spacing={2}>
@@ -61,13 +67,13 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
         name="estimated-rate"
         label="Estimated Rate"
         type="number"
-        value={estimatedRate}
+        value={estimatedRates}
         slotProps={{
           input: {
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           },
         }}
-        onChange={(e) => setEstimatedRate(parseFloat(e.target.value))}
+        onChange={(e) => setEstimatedRates(parseFloat(e.target.value))}
       />
     </Stack>
   );

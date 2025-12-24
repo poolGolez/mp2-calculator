@@ -6,6 +6,19 @@ export default class Mp2Calculation {
     return Math.floor(this.contributions.length / 12);
   }
 
+  get totalContributionAmount(): number {
+    return this.contributions.reduce((a, b) => a + b, 0);
+  }
+
+  get totalDividends(): number {
+    return Array.from({ length: this.numberOfYears }, (_, year) => this.getDividendsForYear(year))
+      .reduce((a, b) => a + b, 0);
+  }
+
+  get endingBalance(): number {
+    return this.getEndingBalanceForYear(this.numberOfYears - 1);
+  }
+
   /**
    * @param 0-based index for year (0 for year 1, 1 for year2, etc...)
    * @returns all contributions for the given year 
