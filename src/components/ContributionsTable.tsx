@@ -9,7 +9,8 @@ import { formatNumber } from "../utils/numeric";
 import type { GridColSpanFn } from "@mui/x-data-grid";
 import Mp2Calculation from "../services/calculator";
 import transform from "./transformToDataRows";
-import { InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
+import PercentTextField from "./PercentTextField";
 
 interface ContributionsTableProps {
   calculation: Mp2Calculation;
@@ -158,29 +159,15 @@ const YearColumnGroupHeader: React.FC<YearColumnGroupHeaderProps> = ({
   return (
     <Stack>
       <Typography>{`Year ${index + 1}`}</Typography>
-      <TextField
+      <PercentTextField
         name={`year${index}-rate`}
         value={dividendRate}
         onChange={(e) => onDividendRateUpdate(parseFloat(e.target.value))}
         size="small"
-        type="number"
         label="Dividend Rate"
         sx={{
           width: 120,
           mt: 1,
-          "& input": {
-            textAlign: "right",
-          },
-        }}
-        slotProps={{
-          htmlInput: {
-            step: 0.1,
-            min: 0,
-            max: 100,
-          },
-          input: {
-            endAdornment: <InputAdornment position="end">%</InputAdornment>,
-          },
         }}
       />
     </Stack>

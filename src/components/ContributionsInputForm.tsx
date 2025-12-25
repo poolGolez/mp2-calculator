@@ -1,10 +1,12 @@
-import { InputAdornment, Stack, TextField } from "@mui/material";
+import { Stack } from "@mui/material";
 import React, {
   useEffect,
   useState,
   type Dispatch,
   type SetStateAction,
 } from "react";
+import NumberTextField from "./NumberTextField";
+import PercentTextField from "./PercentTextField";
 
 interface ContributionsInputFormInitState {
   startingContribution: number;
@@ -46,33 +48,25 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
 
   return (
     <Stack direction="row" spacing={2}>
-      <TextField
+      <NumberTextField
         id="starting-contribution"
         name="starting-contribution"
         label="Starting Contribution"
-        type="number"
         value={startingContribution}
         onChange={(e) => setStartingContribution(parseFloat(e.target.value))}
       />
-      <TextField
+      <NumberTextField
         id="monthly-contribution"
         name="monthly-contribution"
         label="Monthly Contribution"
-        type="number"
         value={monthlyContribution}
         onChange={(e) => setMonthlyContribution(parseFloat(e.target.value))}
       />
-      <TextField
+      <PercentTextField
         id="estimated-rate"
         name="estimated-rate"
         label="Estimated Rate"
-        type="number"
         value={estimatedRates}
-        slotProps={{
-          input: {
-            endAdornment: <InputAdornment position="end">%</InputAdornment>,
-          },
-        }}
         onChange={(e) => setEstimatedRates(parseFloat(e.target.value))}
       />
     </Stack>
