@@ -29,7 +29,7 @@ export default function transform(calculation: Mp2Calculation): DataRow[] {
 
   const totalAverageMonthlyBalanceRow = {
     id: 'AVERAGE_MONTHLY_BALANCE',
-    label: `Average Monthly Balance`,
+    label: `Ave. Monthly Balance`,
   } as AnnualSummaryRow;
 
   const dividendsRow = {

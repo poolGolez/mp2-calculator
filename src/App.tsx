@@ -53,6 +53,7 @@ function App() {
       </Stack>
       <ContributionsTable
         calculation={calculation}
+        setContributions={setContributions}
         setInterestRates={setInterestRates}
       />
     </Stack>

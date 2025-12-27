@@ -1,13 +1,13 @@
 export default class Mp2Calculation {
 
-  constructor(private contributions: number[], private _interestRates: number[]) { }
+  constructor(private _contributions: number[], private _interestRates: number[]) { }
 
   get numberOfYears(): number {
-    return Math.floor(this.contributions.length / 12);
+    return Math.floor(this._contributions.length / 12);
   }
 
   get totalContributionAmount(): number {
-    return this.contributions.reduce((a, b) => a + b, 0);
+    return this._contributions.reduce((a, b) => a + b, 0);
   }
 
   get totalDividends(): number {
@@ -23,6 +23,10 @@ export default class Mp2Calculation {
     return [...this._interestRates];
   }
 
+  get contributions(): number[] {
+    return [...this._contributions];
+  }
+
   getRateForYear(index: number): number {
     return this._interestRates[index];
   }
@@ -33,7 +37,7 @@ export default class Mp2Calculation {
    */
   getContributionsForYear(index: number): number[] {
     const startIndex = Math.ceil(12 * index);
-    return this.contributions.slice(startIndex, startIndex + 12);
+    return this._contributions.slice(startIndex, startIndex + 12);
   }
 
   /**
@@ -51,7 +55,7 @@ export default class Mp2Calculation {
    */
   getAccumulatedMonthlyContributionsSinceYear(index: number): number[] {
     const lastIndex = 12 * (Math.floor(index) + 1)
-    const contributions = this.contributions.slice(0, lastIndex);
+    const contributions = this._contributions.slice(0, lastIndex);
 
     const x = contributions.reduce((result, contribution, idx) => {
       const previousAccumulated = idx > 0 ? result[idx - 1] : 0;

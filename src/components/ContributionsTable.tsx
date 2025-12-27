@@ -11,18 +11,29 @@ import Mp2Calculation from "../services/calculator";
 import transform, { type DataRow } from "./transformToDataRows";
 import { Box, lighten, Stack, Typography, useTheme } from "@mui/material";
 import PercentTextField from "./PercentTextField";
+import { inverseMapMonth } from "../utils/calendar";
+import type { GridValueParser } from "@mui/x-data-grid";
 
 interface ContributionsTableProps {
   calculation: Mp2Calculation;
+  setContributions: React.Dispatch<React.SetStateAction<number[]>>;
   setInterestRates: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-const ContributionsTable: React.FC<ContributionsTableProps> = (props) => {
-  const { calculation } = props;
-  const { columns, columnGroupingModel } = computeColumns(props);
+const ContributionsTable: React.FC<ContributionsTableProps> = ({
+  calculation,
+  setContributions,
+  setInterestRates,
+}) => {
+  const theme = useTheme();
+
+  const { columns, columnGroupingModel } = computeColumns({
+    calculation,
+    setContributions,
+    setInterestRates,
+  });
   const transformedData = transform(calculation);
 
-  const theme = useTheme();
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
       <DataGrid
@@ -51,6 +62,34 @@ const ContributionsTable: React.FC<ContributionsTableProps> = (props) => {
             color: theme.palette.secondary.contrastText,
           },
         }}
+        processRowUpdate={(newRow: DataRow, oldRow: DataRow) => {
+          const editedFields = (
+            Object.keys(newRow) as (keyof DataRow)[]
+          ).filter((field) => newRow[field] !== oldRow[field]);
+
+          const [editedField] = editedFields;
+
+          let multiplier = 0;
+          if (editedField === "year1") {
+            multiplier = 0;
+          } else if (editedField === "year2") {
+            multiplier = 1;
+          } else if (editedField === "year3") {
+            multiplier = 2;
+          } else if (editedField === "year4") {
+            multiplier = 3;
+          } else if (editedField === "year5") {
+            multiplier = 4;
+          }
+
+          const newConts = [...calculation.contributions];
+          const offset = inverseMapMonth(newRow.month as string);
+          const targetIndex = 12 * multiplier + offset;
+          newConts[targetIndex] = parseFloat(newRow[editedFields[0]] as string);
+          setContributions(newConts);
+
+          return newRow;
+        }}
       />
     </Box>
   );
@@ -60,9 +99,9 @@ function computeColumns(props: ContributionsTableProps): {
   columns: GridColDef[];
   columnGroupingModel: GridColumnGroupingModel;
 } {
-  const defaultContributionColDef: GridColDef = {
+  const defaultContributionColDef: GridColDef<number> = {
     headerName: "Contribution",
-    width: 120,
+    width: 115,
     editable: true,
     headerAlign: "right",
     headerClassName: "contributions-cell font-weight-bold font-bold",
@@ -75,12 +114,13 @@ function computeColumns(props: ContributionsTableProps): {
       }
       return 1;
     }) as GridColSpanFn,
+    valueParser: parseFloat as GridValueParser,
     valueFormatter: formatNumber as GridValueFormatter,
   } as GridColDef;
 
   const defaultAccumulationColDef = {
     headerName: "Accumulated Amount",
-    width: 120,
+    width: 115,
     headerAlign: "right",
     headerClassName: "accumulated-contributions-cell",
     align: "right",
