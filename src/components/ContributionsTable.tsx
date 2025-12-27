@@ -6,10 +6,10 @@ import {
 } from "@mui/x-data-grid";
 import React from "react";
 import { formatNumber } from "../utils/numeric";
-import type { GridColSpanFn } from "@mui/x-data-grid";
+import type { GridCellParams, GridColSpanFn } from "@mui/x-data-grid";
 import Mp2Calculation from "../services/calculator";
-import transform from "./transformToDataRows";
-import { Stack, Typography } from "@mui/material";
+import transform, { type DataRow } from "./transformToDataRows";
+import { Box, lighten, Stack, Typography, useTheme } from "@mui/material";
 import PercentTextField from "./PercentTextField";
 
 interface ContributionsTableProps {
@@ -22,16 +22,37 @@ const ContributionsTable: React.FC<ContributionsTableProps> = (props) => {
   const { columns, columnGroupingModel } = computeColumns(props);
   const transformedData = transform(calculation);
 
+  const theme = useTheme();
   return (
-    <DataGrid
-      rows={transformedData}
-      columns={columns}
-      getRowId={(row) => row["id"] ?? row["month"]}
-      columnGroupingModel={columnGroupingModel}
-      columnGroupHeaderHeight={100}
-      showCellVerticalBorder
-      showColumnVerticalBorder
-    />
+    <Box sx={{ height: "100vh", width: "100%" }}>
+      <DataGrid
+        rows={transformedData}
+        columns={columns}
+        getRowId={(row) => row["id"] ?? row["month"]}
+        columnGroupingModel={columnGroupingModel}
+        columnGroupHeaderHeight={100}
+        showCellVerticalBorder
+        showColumnVerticalBorder
+        autoHeight
+        getRowHeight={() => "auto"}
+        sx={{
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold",
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            lineHeight: 1.3,
+          },
+          "& .contributions-cell": {
+            bgcolor: lighten(theme.palette.primary.light, 0.7),
+            color: theme.palette.primary.contrastText,
+          },
+          "& .accumulated-contributions-cell": {
+            bgcolor: theme.palette.secondary.light,
+            color: theme.palette.secondary.contrastText,
+          },
+        }}
+      />
+    </Box>
   );
 };
 
@@ -41,9 +62,13 @@ function computeColumns(props: ContributionsTableProps): {
 } {
   const defaultContributionColDef: GridColDef = {
     headerName: "Contribution",
-    width: 100,
+    width: 120,
+    editable: true,
     headerAlign: "right",
+    headerClassName: "contributions-cell font-weight-bold font-bold",
     align: "right",
+    cellClassName: (params: GridCellParams<DataRow, number>) =>
+      params.row.month ? "contributions-cell" : "error.main",
     colSpan: ((_, row) => {
       if (row.id) {
         return 2;
@@ -54,10 +79,13 @@ function computeColumns(props: ContributionsTableProps): {
   } as GridColDef;
 
   const defaultAccumulationColDef = {
-    headerName: "Accumulated",
+    headerName: "Accumulated Amount",
     width: 120,
     headerAlign: "right",
+    headerClassName: "accumulated-contributions-cell",
     align: "right",
+    cellClassName: (params: GridCellParams<DataRow, number>) =>
+      params.row.month ? "accumulated-contributions-cell" : "error.main",
     valueFormatter: formatNumber as GridValueFormatter,
   } as GridColDef;
 
@@ -65,7 +93,7 @@ function computeColumns(props: ContributionsTableProps): {
     {
       field: "month",
       headerName: "Month",
-      width: 150,
+      width: 120,
       valueGetter: (_, row) => {
         if (row.id !== undefined) {
           return row.label;

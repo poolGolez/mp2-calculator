@@ -13,7 +13,7 @@ interface AnnualSummaryRow {
   [key: string]: string | number;
 }
 
-type DataRow = MonthlyContributionRow | AnnualSummaryRow;
+export type DataRow = MonthlyContributionRow | AnnualSummaryRow;
 
 export default function transform(calculation: Mp2Calculation): DataRow[] {
 
