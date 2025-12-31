@@ -99,7 +99,7 @@ function computeColumns(props: ContributionsTableProps): {
   columns: GridColDef[];
   columnGroupingModel: GridColumnGroupingModel;
 } {
-  const defaultContributionColDef: GridColDef<number> = {
+  const defaultContributionColDef: GridColDef = {
     headerName: "Contribution",
     width: 115,
     editable: true,
