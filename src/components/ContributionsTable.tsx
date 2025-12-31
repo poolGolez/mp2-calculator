@@ -44,6 +44,7 @@ const ContributionsTable: React.FC<ContributionsTableProps> = ({
         columnGroupHeaderHeight={100}
         showCellVerticalBorder
         showColumnVerticalBorder
+        disableColumnMenu
         getRowHeight={() => 32}
         sx={{
           "& .MuiDataGrid-columnHeaderTitle": {
@@ -102,6 +103,7 @@ function computeColumns(props: ContributionsTableProps): {
     headerName: "Contribution",
     width: 115,
     editable: true,
+    sortable: false,
     headerAlign: "right",
     headerClassName: "contributions-cell font-weight-bold font-bold",
     align: "right",
@@ -120,6 +122,7 @@ function computeColumns(props: ContributionsTableProps): {
   const defaultAccumulationColDef = {
     headerName: "Accumulated Amount",
     width: 115,
+    sortable: false,
     headerAlign: "right",
     headerClassName: "accumulated-contributions-cell",
     align: "right",
@@ -133,6 +136,7 @@ function computeColumns(props: ContributionsTableProps): {
       field: "month",
       headerName: "Month",
       width: 120,
+      sortable: false,
       valueGetter: (_, row) => {
         if (row.id !== undefined) {
           return row.label;
