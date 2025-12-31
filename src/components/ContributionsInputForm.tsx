@@ -9,7 +9,6 @@ import NumberTextField from "./NumberTextField";
 import PercentTextField from "./PercentTextField";
 
 interface ContributionsInputFormInitState {
-  startingContribution: number;
   monthlyContribution: number;
   estimatedRate: number;
 }
@@ -25,9 +24,6 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
   onUpdate,
   setInterestRates,
 }) => {
-  const [startingContribution, setStartingContribution] = useState<number>(
-    initState.startingContribution
-  );
   const [monthlyContribution, setMonthlyContribution] = useState<number>(
     initState.monthlyContribution
   );
@@ -36,11 +32,8 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
   );
 
   useEffect(() => {
-    onUpdate([
-      startingContribution,
-      ...Array(5 * 12 - 1).fill(monthlyContribution),
-    ]);
-  }, [startingContribution, monthlyContribution, onUpdate]);
+    onUpdate(Array(5 * 12).fill(monthlyContribution));
+  }, [monthlyContribution, onUpdate]);
 
   useEffect(() => {
     setInterestRates(Array(5).fill(estimatedRates));
@@ -48,13 +41,6 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
 
   return (
     <Stack direction="row" spacing={2}>
-      <NumberTextField
-        id="starting-contribution"
-        name="starting-contribution"
-        label="Starting Contribution"
-        value={startingContribution}
-        onChange={(e) => setStartingContribution(parseFloat(e.target.value))}
-      />
       <NumberTextField
         id="monthly-contribution"
         name="monthly-contribution"

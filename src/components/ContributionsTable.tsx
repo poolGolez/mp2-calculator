@@ -44,8 +44,7 @@ const ContributionsTable: React.FC<ContributionsTableProps> = ({
         columnGroupHeaderHeight={100}
         showCellVerticalBorder
         showColumnVerticalBorder
-        autoHeight
-        getRowHeight={() => "auto"}
+        getRowHeight={() => 32}
         sx={{
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: "bold",

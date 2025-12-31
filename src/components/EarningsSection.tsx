@@ -14,7 +14,7 @@ const EarningsSection: React.FC<EarningsSectionProps> = ({
     (totalDividends / totalContributionAmount) * 100;
 
   return (
-    <Stack spacing={2} flex={1}>
+    <Stack spacing={2} flex={1} direction="row">
       <Stack direction="row" spacing={1}>
         <Box flex={1} textAlign="left">
           Total Dividends Earned

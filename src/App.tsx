@@ -36,10 +36,9 @@ function App() {
         spacing={2}
         divider={<Divider orientation="vertical" flexItem />}
       >
-        <Box flex={2}>
+        <Box flex={1}>
           <ContributionsInputForm
             initState={{
-              startingContribution: 500.0,
               monthlyContribution: 500.0,
               estimatedRate: initialInterestRate,
             }}
@@ -47,7 +46,7 @@ function App() {
             setInterestRates={setInterestRates}
           />
         </Box>
-        <Box flex={1}>
+        <Box flex={2}>
           <EarningsSection calculation={calculation} />
         </Box>
       </Stack>
