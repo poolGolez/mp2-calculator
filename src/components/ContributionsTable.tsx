@@ -82,6 +82,7 @@ const ContributionsTable: React.FC<ContributionsTableProps> = ({
         showColumnVerticalBorder
         disableColumnMenu
         getRowHeight={(params) => (params.model.month ? 32 : "auto")}
+        isCellEditable={(params) => params.row.month}
         sx={{
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: "bold",
