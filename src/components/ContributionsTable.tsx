@@ -32,7 +32,43 @@ const ContributionsTable: React.FC<ContributionsTableProps> = ({
     setContributions,
     setInterestRates,
   });
+
   const transformedData = transform(calculation);
+
+  const onProcessRowUpdate = (newRow: DataRow, oldRow: DataRow) => {
+    const [editedField] = (Object.keys(newRow) as (keyof DataRow)[]).filter(
+      (field) => newRow[field] !== oldRow[field]
+    );
+
+    let multiplier = 0;
+    if (editedField === "year1") {
+      multiplier = 0;
+    } else if (editedField === "year2") {
+      multiplier = 1;
+    } else if (editedField === "year3") {
+      multiplier = 2;
+    } else if (editedField === "year4") {
+      multiplier = 3;
+    } else if (editedField === "year5") {
+      multiplier = 4;
+    }
+
+    const offset = inverseMapMonth(newRow.month as string);
+    const targetIndex = 12 * multiplier + offset;
+
+    const newConts = calculation.contributions.map((cont, idx) =>
+      idx === targetIndex ? parseFloat(newRow[editedField] as string) : cont
+    );
+
+    setContributions(newConts);
+
+    // Note: Need to recompute the whole table as changes affects succeeding contributions;
+    // We replace the row being edited with the newly computed row
+    const newTransformedData = transform(
+      new Mp2Calculation(newConts, calculation.interestRates)
+    );
+    return newTransformedData.find((r) => r.month === newRow.month)!;
+  };
 
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
@@ -62,34 +98,7 @@ const ContributionsTable: React.FC<ContributionsTableProps> = ({
             color: theme.palette.secondary.contrastText,
           },
         }}
-        processRowUpdate={(newRow: DataRow, oldRow: DataRow) => {
-          const editedFields = (
-            Object.keys(newRow) as (keyof DataRow)[]
-          ).filter((field) => newRow[field] !== oldRow[field]);
-
-          const [editedField] = editedFields;
-
-          let multiplier = 0;
-          if (editedField === "year1") {
-            multiplier = 0;
-          } else if (editedField === "year2") {
-            multiplier = 1;
-          } else if (editedField === "year3") {
-            multiplier = 2;
-          } else if (editedField === "year4") {
-            multiplier = 3;
-          } else if (editedField === "year5") {
-            multiplier = 4;
-          }
-
-          const newConts = [...calculation.contributions];
-          const offset = inverseMapMonth(newRow.month as string);
-          const targetIndex = 12 * multiplier + offset;
-          newConts[targetIndex] = parseFloat(newRow[editedFields[0]] as string);
-          setContributions(newConts);
-
-          return newRow;
-        }}
+        processRowUpdate={onProcessRowUpdate}
       />
     </Box>
   );
