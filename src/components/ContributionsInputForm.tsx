@@ -47,6 +47,12 @@ const ContributionsInputForm: React.FC<ContributionsInputFormProps> = ({
         label="Monthly Contribution"
         value={monthlyContribution}
         onChange={(e) => setMonthlyContribution(parseFloat(e.target.value))}
+        slotProps={{
+          htmlInput: {
+            step: 500,
+            min: 500,
+          },
+        }}
       />
       <PercentTextField
         id="estimated-rate"
