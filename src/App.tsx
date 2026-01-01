@@ -1,5 +1,3 @@
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { Box, Divider, Stack } from "@mui/material";
 import ContributionsTable from "./components/ContributionsTable";
@@ -23,14 +21,6 @@ function App() {
 
   return (
     <Stack sx={{ height: "100vh", width: "100%" }} spacing={2}>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <Stack
         direction="row"
         spacing={2}
